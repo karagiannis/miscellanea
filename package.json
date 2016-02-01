@@ -1,0 +1,27 @@
+{
+  "name": "exam1",
+  "version": "1.0.0",
+  "description": "examinations assignement",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1dv023/lk222qn-examination-1.git"
+  },
+  "keywords": [
+    "promises",
+    "webscraping"
+  ],
+  "author": "Lasse Karagiannis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1dv023/lk222qn-examination-1/issues"
+  },
+  "homepage": "https://github.com/1dv023/lk222qn-examination-1#readme",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "request": "^2.69.0"
+  }
+}
