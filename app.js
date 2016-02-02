@@ -7,6 +7,7 @@ var scraper = require("./lib/utility").scraper;
 //scraper(url);
 var loader = require("./lib/utility").promiseHtml;
 var linkExtractor = require("./lib/utility").linkExtractor;
+var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
 
 
 
@@ -41,25 +42,75 @@ var restaurantUrl = mainPageLinks.then(function(links){
                       return linkExtractor(html);   //Extract all links
                   });
   var PetersCalendarSubLink = calendarLinks.then(function(links){
-                        console.log(links[0]);
-                        return links[0].trim();
-                  });
-  var PaulsCalendarSubLink = calendarLinks.then(function(links){
-                        console.log(links[1]);
+                        console.log("Peter sublink",links[1]);
                         return links[1].trim();
                   });
+  var PaulsCalendarSubLink = calendarLinks.then(function(links){
+                        console.log("Paul sublink",links[0]);
+                        return links[0].trim();
+                  });
   var MarysCalendarSubLink = calendarLinks.then(function(links){
-                        console.log(links[2]);
+                        console.log("Mary sublink",links[2]);
                         return links[2].trim();
                   });
 
   var PetersFullCalendarUrl = Promise.all([calendarBaseUrl,PetersCalendarSubLink])
                                       .then(function(results){
-                                        console.log(results[0].concat("/").concat(results[1]));
-                                        return results[0].concat(results[1]);
+                                        console.log("Peter ",results[0].concat("/").concat(results[1]));
+                                        return results[0].concat("/").concat(results[1]);
                                       });
 
+var PaulsFullCalendarUrl = Promise.all([calendarBaseUrl,PaulsCalendarSubLink])
+                                    .then(function(results){
+                                      console.log("Paul ",results[0].concat("/").concat(results[1]));
+                                      return results[0].concat("/").concat(results[1]);
+                                    });
+var MarysFullCalendarUrl = Promise.all([calendarBaseUrl,MarysCalendarSubLink])
+                                    .then(function(results){
+                                      console.log("Mary", results[0].concat("/").concat(results[1]));
+                                      return results[0].concat("/").concat(results[1]);
+                                    });
 
+  var PetersCalendar = PetersFullCalendarUrl.then(function(calendarUrl){
+                                      return loader(calendarUrl);
+                                    }).then(function(html){
+                                      return okNotOkExtractor(html);
+                                    }).then(function(calendar){
+                                      console.log("Peter", calendar);
+                                      return calendar;
+                                    });
+
+var PaulsCalendar = PaulsFullCalendarUrl.then(function(calendarUrl){
+                                    return loader(calendarUrl);
+                                  }).then(function(html){
+                                    return okNotOkExtractor(html);
+                                  }).then(function(calendar){
+                                    console.log("Paul ",calendar);
+                                    return calendar;
+                                  });
+
+  var MarysCalendar = MarysFullCalendarUrl.then(function(calendarUrl){
+                                      return loader(calendarUrl);
+                                    }).then(function(html){
+                                      return okNotOkExtractor(html);
+                                    }).then(function(calendar){
+                                      console.log("Mary ",calendar);
+                                      return calendar;
+                                    });
+
+  var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
+                          .then(function(calendars){
+                                  var arr = [];
+                                  var meet = true;
+                                  for (var i = 0; i < calendars.length; i++){
+                                        for(var j = 0; j < calendars[i].length; j++){
+                                               meet= meet && (calendars[j][i] === "ok" || calendars[j][i] === "OK");
+                                               arr[i] = meet;
+                                        }
+                                  }
+                                  console.log("meeting day", arr)
+                                return arr;
+                          });
 
                     // .then(function(arrayOfLinksMainPage){      //H
                     //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
