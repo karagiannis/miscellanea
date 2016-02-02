@@ -1,3 +1,4 @@
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 
 var url = process.argv[2] || "http://46.101.232.43 ";
@@ -136,20 +137,39 @@ var ajaxConfig = {contentType:"application/json",
                   url:"",
                   query:""};
   var ajax = require("./lib/ajax");
-// var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results){
-//                             console.log("results", results);
-//                             ajaxConfig.url = results[0] + "/check?day=" + "01" + "&movie=" + "01";
-//                             console.log("ajaxConfig.url", ajaxConfig.url);
-//                             return ajax.get(ajaxConfig);
-//                     }).then(function(str){
-//                       console.log(str);
-//                     }).catch( console.log("Error doens't work"));
+var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results){
+                            console.log("results", results);
+                            ajaxConfig.url = results[0] + "/check?day=" + "01" + "&movie=" + "01";
+                            console.log("ajaxConfig.url", ajaxConfig.url);
+                            return ajax.get(ajaxConfig);
+                    }).then(function(str){
+                      console.log(str);
+                    }).catch( console.log("Error doens't work"));
 
-ajaxConfig.url = "http://46.101.232.43/cinema/check?day=01&movie=01";
-                    console.log("ajaxConfig.url", ajaxConfig.url);
-                    ajax.get(ajaxConfig).then(function(data){
-                      console.log(data);
-                    }).catch( console.log("Error doens't work 2"));
+// ajaxConfig.url = "http://46.101.232.43/cinema/check?day=01&movie=01";
+//                     console.log("ajaxConfig.url", ajaxConfig.url);
+//                     ajax.request(ajaxConfig).then(function(data){
+//                       console.log(data);
+//                     }).catch( console.log("Error doens't work 3"));
+
+//   var ajaxConfig = {contentType:"application/json",
+//                     url:"http://46.101.232.43/cinema/check?day=03&movie=01",
+//                     query:""};
+//
+// var ajaxReq = require("./lib/ajaxNoPromise");
+// var arr = ajaxReq.get(ajaxConfig, function(error, data){
+//         if(error){
+//           //return throw new Error("Network error" +error);
+//           return error;
+//         }
+//         data = JSON.parse(data);
+//         console.log(data);
+//         return data;
+// });
+
+
+
+
 
                     // .then(function(arrayOfLinksMainPage){      //H
                     //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
