@@ -11,6 +11,7 @@ var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
 
 
 
+
   var mainPage = loader(url);
   var mainPageLinks = mainPage.then(function(html){  //Get the main html page from input url
                       //  console.log(html);
@@ -33,41 +34,41 @@ var restaurantUrl = mainPageLinks.then(function(links){
                   });
 
   var calendarPage = calendarBaseUrl.then(function(BaseUrl){
-                        console.log(BaseUrl);
+                        //console.log(BaseUrl);
                         return loader(BaseUrl);
                   });
 
   var calendarLinks = calendarPage.then(function(html){
-                      console.log(html);
+                      //console.log(html);
                       return linkExtractor(html);   //Extract all links
                   });
   var PetersCalendarSubLink = calendarLinks.then(function(links){
-                        console.log("Peter sublink",links[1]);
+                        //console.log("Peter sublink",links[1]);
                         return links[1].trim();
                   });
   var PaulsCalendarSubLink = calendarLinks.then(function(links){
-                        console.log("Paul sublink",links[0]);
+                      //  console.log("Paul sublink",links[0]);
                         return links[0].trim();
                   });
   var MarysCalendarSubLink = calendarLinks.then(function(links){
-                        console.log("Mary sublink",links[2]);
+                        //console.log("Mary sublink",links[2]);
                         return links[2].trim();
                   });
 
   var PetersFullCalendarUrl = Promise.all([calendarBaseUrl,PetersCalendarSubLink])
                                       .then(function(results){
-                                        console.log("Peter ",results[0].concat("/").concat(results[1]));
+                                        //console.log("Peter ",results[0].concat("/").concat(results[1]));
                                         return results[0].concat("/").concat(results[1]);
                                       });
 
 var PaulsFullCalendarUrl = Promise.all([calendarBaseUrl,PaulsCalendarSubLink])
                                     .then(function(results){
-                                      console.log("Paul ",results[0].concat("/").concat(results[1]));
+                                      //console.log("Paul ",results[0].concat("/").concat(results[1]));
                                       return results[0].concat("/").concat(results[1]);
                                     });
 var MarysFullCalendarUrl = Promise.all([calendarBaseUrl,MarysCalendarSubLink])
                                     .then(function(results){
-                                      console.log("Mary", results[0].concat("/").concat(results[1]));
+                                      //console.log("Mary", results[0].concat("/").concat(results[1]));
                                       return results[0].concat("/").concat(results[1]);
                                     });
 
@@ -76,7 +77,7 @@ var MarysFullCalendarUrl = Promise.all([calendarBaseUrl,MarysCalendarSubLink])
                                     }).then(function(html){
                                       return okNotOkExtractor(html);
                                     }).then(function(calendar){
-                                      console.log("Peter", calendar);
+                                      //console.log("Peter", calendar);
                                       return calendar;
                                     });
 
@@ -85,7 +86,7 @@ var PaulsCalendar = PaulsFullCalendarUrl.then(function(calendarUrl){
                                   }).then(function(html){
                                     return okNotOkExtractor(html);
                                   }).then(function(calendar){
-                                    console.log("Paul ",calendar);
+                                    //console.log("Paul ",calendar);
                                     return calendar;
                                   });
 
@@ -94,11 +95,11 @@ var PaulsCalendar = PaulsFullCalendarUrl.then(function(calendarUrl){
                                     }).then(function(html){
                                       return okNotOkExtractor(html);
                                     }).then(function(calendar){
-                                      console.log("Mary ",calendar);
+                                      //console.log("Mary ",calendar);
                                       return calendar;
                                     });
 var possibleDays = ["friday", "saturday", "sunday"];
-  var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
+var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
                           .then(function(calendars){
                                   var arr = [];
                                   var meet = true;
@@ -108,15 +109,28 @@ var possibleDays = ["friday", "saturday", "sunday"];
                                                arr[i] = meet;
                                         }
                                   }
-                                  console.log("meeting day", arr);
+                                  //console.log("meeting day", arr);
                                   arr.forEach(function(elem, i){
                                     if(elem)
-                                      console.log("Possible meeting day",possibleDays[i] );
+                                      //console.log("Possible meeting day",possibleDays[i] );
+                                      console.log("");
                                   });
                                 return arr;
                           });
 
+var cinemaHTML = cinemaUrl.then(function(urlCinema){
+                            //console.log("urlCinema", urlCinema);
+                            return loader(urlCinema);
+                      });
 
+var filmExtractor = require("./lib/utility").filmExtractor;
+var cinemaFilms = cinemaHTML.then(function(html){
+                            //console.log("cinema html", html)
+                            return filmExtractor(html);
+                      });
+var cinemaFilmsPrintOut = cinemaFilms.then(function(arr){
+                                console.log("List of films", arr);
+                          });
                     // .then(function(arrayOfLinksMainPage){      //H
                     //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
                     //   this.cinemaUrl = url.trim().concat(arrayOfLinksMainPage[1]);
