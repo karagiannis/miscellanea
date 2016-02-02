@@ -138,34 +138,30 @@ var ajaxConfig = {contentType:"application/json",
                   query:""};
   var ajax = require("./lib/ajax");
 var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results){
-                            console.log("results", results);
+                            //console.log("results", results);
                             ajaxConfig.url = results[0] + "/check?day=" + "01" + "&movie=" + "01";
-                            console.log("ajaxConfig.url", ajaxConfig.url);
+                            //console.log("ajaxConfig.url", ajaxConfig.url);
                             return ajax.get(ajaxConfig);
                     }).then(function(str){
-                      console.log(str);
-                    }).catch( console.log("Error doens't work"));
+                      //console.log(str);
+                    });
+//username=zeke&password=coys&submit=login
+//Content-Type: application/x-www-form-urlencoded
 
-// ajaxConfig.url = "http://46.101.232.43/cinema/check?day=01&movie=01";
-//                     console.log("ajaxConfig.url", ajaxConfig.url);
-//                     ajax.request(ajaxConfig).then(function(data){
-//                       console.log(data);
-//                     }).catch( console.log("Error doens't work 3"));
+var obj = {username:"zeke", password:"coy"};
+  var ajaxConfig = {contentType:"application/x-www-form-urlencoded",
+                    url:"http://46.101.232.43/dinner",
+                    query:"username=zeke&password=coys&submit=login"};
+                    ajaxConfig.query = "username=zeke&password=coys&submit=login";
+                    //ajaxConfig.query = JSON.stringify(obj);
+                    //ajaxConfig.contentType = "application/json";
+                    ajaxConfig.contentType = "text/html";
+                    //ajaxConfig.contentType = "application/x-www-form-urlencoded";
+ajax.post(ajaxConfig).then(function(data){
+                      console.log(data);
+                    }).catch( console.log("Error doens't work 5"));
 
-//   var ajaxConfig = {contentType:"application/json",
-//                     url:"http://46.101.232.43/cinema/check?day=03&movie=01",
-//                     query:""};
-//
-// var ajaxReq = require("./lib/ajaxNoPromise");
-// var arr = ajaxReq.get(ajaxConfig, function(error, data){
-//         if(error){
-//           //return throw new Error("Network error" +error);
-//           return error;
-//         }
-//         data = JSON.parse(data);
-//         console.log(data);
-//         return data;
-// });
+
 
 
 
