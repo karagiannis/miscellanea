@@ -97,7 +97,7 @@ var PaulsCalendar = PaulsFullCalendarUrl.then(function(calendarUrl){
                                       console.log("Mary ",calendar);
                                       return calendar;
                                     });
-
+var possibleDays = ["friday", "saturday", "sunday"];
   var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
                           .then(function(calendars){
                                   var arr = [];
@@ -108,9 +108,14 @@ var PaulsCalendar = PaulsFullCalendarUrl.then(function(calendarUrl){
                                                arr[i] = meet;
                                         }
                                   }
-                                  console.log("meeting day", arr)
+                                  console.log("meeting day", arr);
+                                  arr.forEach(function(elem, i){
+                                    if(elem)
+                                      console.log("Possible meeting day",possibleDays[i] );
+                                  });
                                 return arr;
                           });
+
 
                     // .then(function(arrayOfLinksMainPage){      //H
                     //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
