@@ -129,8 +129,28 @@ var cinemaFilms = cinemaHTML.then(function(html){
                             return filmExtractor(html);
                       });
 var cinemaFilmsPrintOut = cinemaFilms.then(function(arr){
-                                console.log("List of films", arr);
+                                //console.log("List of films", arr);
                           });
+var filmAvailibility = require("./lib/utility").filmAvailibility;
+var ajaxConfig = {contentType:"application/json",
+                  url:"",
+                  query:""};
+  var ajax = require("./lib/ajax");
+// var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results){
+//                             console.log("results", results);
+//                             ajaxConfig.url = results[0] + "/check?day=" + "01" + "&movie=" + "01";
+//                             console.log("ajaxConfig.url", ajaxConfig.url);
+//                             return ajax.get(ajaxConfig);
+//                     }).then(function(str){
+//                       console.log(str);
+//                     }).catch( console.log("Error doens't work"));
+
+ajaxConfig.url = "http://46.101.232.43/cinema/check?day=01&movie=01";
+                    console.log("ajaxConfig.url", ajaxConfig.url);
+                    ajax.get(ajaxConfig).then(function(data){
+                      console.log(data);
+                    }).catch( console.log("Error doens't work 2"));
+
                     // .then(function(arrayOfLinksMainPage){      //H
                     //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
                     //   this.cinemaUrl = url.trim().concat(arrayOfLinksMainPage[1]);
