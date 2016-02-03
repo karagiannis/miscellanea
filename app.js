@@ -1,6 +1,6 @@
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-
+var request = require("request");
 var url = process.argv[2] || "http://46.101.232.43 ";
 
 var scraper = require("./lib/utility").scraper;
@@ -157,13 +157,32 @@ var obj = {username:"zeke", password:"coy"};
 
                     //ajaxConfig.query = JSON.stringify(obj);
                     //ajaxConfig.contentType = "application/json";
-                    ajaxConfig.contentType = "text/html";
+                    //ajaxConfig.contentType = "text/html";
                     //ajaxConfig.contentType = "text/plain";
                     //"application/x-www-form-urlencoded"
-                  //  ajaxConfig.contentType = "application/x-www-form-urlencoded";
-ajax.post(ajaxConfig).then(function(data){
+                    ajaxConfig.query = "username=zeke&password=coys&submit=login";
+                    ajaxConfig.contentType = "application/x-www-form-urlencoded";
+var loginPost = ajax.post(ajaxConfig).then(function(data){
                       console.log(data);
                     });
+  var bookingSite = Promise.all([loginPost]).then(function(){
+                        var url = "http://46.101.232.43/dinner/login";
+  });
+
+  var formData = {
+    // Pass a simple key-value pair
+    username:"zeke",password:"coys",submit:"login"
+  };
+  var url = "http://46.101.232.43/dinner/login";
+ var r = request.post(url,formData,
+        function optionalCallback(err, httpResponse, body)
+        {
+             if (err) {
+              return console.error('upload failed:', err);
+            }
+           console.log('Upload successful!  Server responded with:', body);
+       });
+
 
 
 
