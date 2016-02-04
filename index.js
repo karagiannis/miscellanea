@@ -27,3 +27,5 @@ var arr = ajaxReq.post(ajaxConfig, function(error, data){
         console.log(data);
         return data;
 });
+
+var requester = require("requester");

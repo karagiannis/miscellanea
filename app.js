@@ -177,28 +177,47 @@ var loginDetails = restaurantUrl.then(function(restauranturl){
 
  var redirecter = require("./lib/utility").redirecter;
 
-var redirectedBookingSubUrl = restaurantUrl.then(function(loginUrl){
+var redirectedBookingSubUrlAndCookie = restaurantUrl.then(function(loginUrl){
                   return redirecter("zeke", "coys", "login", loginUrl + "/login");
               }).then(function(redirectMessage){
                 //console.log(redirectMessage);
-                var dataToArray = redirectMessage.split(" ");
-                var subUrl = dataToArray[dataToArray.length -1];
-                //console.log("suburl", subUrl);
-                return subUrl;
+                var redirectArray = redirectMessage;
+                var messageWithSubUrlIncluded = redirectArray[0].split(" ");
+                var subUrl = messageWithSubUrlIncluded[messageWithSubUrlIncluded.length -1];
+                //console.log("Suburl NOW ", subUrl);
+                var messageWithCookieIncludedTemp = redirectArray[1].split("[")[1].split("]")[0];
+                //console.log("messageWithCookieIncludedTemp ", messageWithCookieIncludedTemp);
+                var arr = [];
+                arr[0]=subUrl;
+                arr[1] = messageWithCookieIncludedTemp;//The cookie
+                return arr;
               });
-var loader = require("./lib/utility").promiseHtml;
-var restaurantBookingUrl = Promise.all([restaurantUrl,redirectedBookingSubUrl])
+var bookingsPageLoader = require("./lib/utility").bookingsPageLoader;
+var restaurantBookingHTML = Promise.all([restaurantUrl,redirectedBookingSubUrlAndCookie])
                                        .then(function(results){
-                                         console.log("results", results);
-                                         var fullBookingUrlString = results[0]+"/"+results[1];
-                                         console.log("fullBookingUrlString  ",fullBookingUrlString);
-                                         return fullBookingUrlString;
+                                         //console.log("results", results);
+                                         var fullBookingUrlString = results[0]+"/"+results[1][0];
+                                         var CookieString = results[1][1];
+                                         //console.log("fullBookingUrlString  ",fullBookingUrlString);
+
+                                         var options = {
+                                           url: fullBookingUrlString.trim().replace(/['"]+/g, ''),  //taking away double quotes
+                                           headers: {
+                                             'User-Agent': 'request',
+                                             'cookie': CookieString.replace(/['"]+/g, '').split()
+                                           }
+                                         };
+                                         console.log("options.url", options.url);
+                                         console.log(options.headers.cookie);
+                                         return bookingsPageLoader(options);
+                                      }).then(function(html){
+                                        console.log(html);
                                       });
 
-  var  restaurantBookingPage = restaurantBookingUrl.then(function(urlLink){
-                                            var trimmedUrl = urlLink.trim();
-                                            console.log("trimmedUrl", trimmedUrl);
-                                          return loader(trimmedUrl);
-                                    }).then(function(html){
-                                      console.log(html);
-                                    })
+  // var  restaurantBookingPage = restaurantBookingUrl.then(function(urlLink){
+  //                                           var trimmedUrl = urlLink.trim();
+  //                                           console.log("trimmedUrl", trimmedUrl);
+  //                                         return loader(trimmedUrl);
+  //                                   }).then(function(html){
+  //                                     console.log(html);
+  //                                   })
