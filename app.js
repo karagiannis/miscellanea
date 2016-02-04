@@ -163,28 +163,36 @@ var obj = {username:"zeke", password:"coy"};
                     ajaxConfig.query = "username=zeke&password=coys&submit=login";
                     ajaxConfig.contentType = "application/x-www-form-urlencoded";
 var loginPost = ajax.post(ajaxConfig).then(function(data){
-                      console.log(data);
+                      //console.log(data);
                     });
   var bookingSite = Promise.all([loginPost]).then(function(){
                         var url = "http://46.101.232.43/dinner/login";
   });
 
-  var formData = {
-    // Pass a simple key-value pair
-    username:"zeke",password:"coys",submit:"login"
-  };
+  // var formData = {
+  //   // Pass a simple key-value pair
+  //   username:"zeke",password:"coys",submit:"login"
+  // };
   var url = "http://46.101.232.43/dinner/login";
- var r = request.post(url,formData,
-        function optionalCallback(err, httpResponse, body)
-        {
-             if (err) {
-              return console.error('upload failed:', err);
-            }
-           console.log('Upload successful!  Server responded with:', body);
-       });
+  var FormData = require('form-data');
+  var formData = new FormData();
+  formData = {
+  // Pass a simple key-value pair
+  'username': 'zeke',
+  'password': 'coys',
+  'submit': 'login',
+   my_buffer: new Buffer([1, 2, 3])
+};
 
-
-
+             var r = request.post({url:"http://46.101.232.43/dinner/login", formData: formData},
+                    function optionalCallback(err, httpResponse, body)
+                    {
+                         if (err) {
+                          return console.error('upload failed:', err);
+                        }
+                        console.log(httpResponse);
+                       console.log('Upload successful!  Server responded with:', body);
+                   });
 
 
 
