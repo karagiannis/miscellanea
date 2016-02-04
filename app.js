@@ -180,19 +180,60 @@ var loginPost = ajax.post(ajaxConfig).then(function(data){
   // Pass a simple key-value pair
   'username': 'zeke',
   'password': 'coys',
-  'submit': 'login',
-   my_buffer: new Buffer([1, 2, 3])
+  'submit': 'login'
 };
 
-             var r = request.post({url:"http://46.101.232.43/dinner/login", formData: formData},
-                    function optionalCallback(err, httpResponse, body)
-                    {
-                         if (err) {
-                          return console.error('upload failed:', err);
-                        }
-                        console.log(httpResponse);
-                       console.log('Upload successful!  Server responded with:', body);
-                   });
+            //  var r = request.post({url:"http://46.101.232.43/dinner/login", formData: formData},
+            //         function optionalCallback(err, httpResponse, body)
+            //         {
+            //              if (err) {
+            //               return console.error('upload failed:', err);
+            //             }
+            //             console.log(httpResponse);
+            //            console.log('Upload successful!  Server responded with:', body);
+            //        });
+             //
+             //
+            //       var form = r.form();
+            //       form.append('username', 'zeke');
+            //       form.append('password', 'coys');
+            //       form.append('submit', 'login');
+             //
+            //         request .post('http://46.101.232.43/dinner/login', function optionalCallback(err, httpResponse, body) {
+            //          if (err) {
+            //           return console.error('upload failed:', err);
+            //         }
+            //         console.log(httpResponse);
+            //        console.log('Upload successful!  Server responded with:', body);
+            //        })
+
+
+var a = "username=zeke&password=coys&submit=login";
+console.log("a",a);
+console.log("a.length",a.length);
+
+var r = request({
+            method: 'POST',
+            preambleCRLF: true,
+            postambleCRLF: true,
+            uri: 'http://46.101.232.43/dinner/login',
+            multipart: [
+              {
+                'content-type': 'application/x-www-form-urlencoded',
+                'content-length': 40,
+                body: "username=zeke&password=coys&submit=login"
+              }
+                      ],
+            function (error, response, body)
+            {
+                if (error)
+                {
+                  return console.error('upload failed:', error);
+                }
+                console.log(response);
+                console.log('Upload successful!  Server responded with:', body);
+            }
+        });
 
 
 
