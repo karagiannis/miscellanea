@@ -2,6 +2,8 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var request = require("request");
 var url = process.argv[2] || "http://46.101.232.43 ";
+var username = process.argv[3] || "zeke";
+var password = process.argv[4] || "coys";
 
 var scraper = require("./lib/utility").scraper;
 
@@ -30,7 +32,7 @@ var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
                     });
 
 var restaurantUrl = mainPageLinks.then(function(links){
-                    //console.log(url.trim().concat(links[2]));
+                    //console.log("restaurant url", url.trim().concat(links[2]));
                     return(url.trim().concat(links[2]));
                   });
 
@@ -145,128 +147,58 @@ var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results)
                     }).then(function(str){
                       //console.log(str);
                     });
-//username=zeke&password=coys&submit=login
-//Content-Type: application/x-www-form-urlencoded
+var loginDetailsExtractor = require("./lib/utility").loginDetailsExtractor;
+var loginDetails = restaurantUrl.then(function(restauranturl){
+                        return loader(restauranturl);
+                  }).then(function(htmlPage){
+                        return(loginDetailsExtractor(htmlPage));
+                  }).then(function(data){
+                    //console.log("login details", data);
+                  });
 
-var obj = {username:"zeke", password:"coy"};
-  var ajaxConfig = {contentType:"application/x-www-form-urlencoded",
-                    url:"http://46.101.232.43/dinner/login",
-                    query:"username=zeke&password=coys&submit=login"};
-                   ajaxConfig.query = "username=zeke&password=coys&submit=login";
-                    //ajaxConfig.query = "username=zeke&password=coys";
-
-                    //ajaxConfig.query = JSON.stringify(obj);
-                    //ajaxConfig.contentType = "application/json";
-                    //ajaxConfig.contentType = "text/html";
-                    //ajaxConfig.contentType = "text/plain";
-                    //"application/x-www-form-urlencoded"
-                    ajaxConfig.query = "username=zeke&password=coys&submit=login";
-                    ajaxConfig.contentType = "application/x-www-form-urlencoded";
-var loginPost = ajax.post(ajaxConfig).then(function(data){
-                      //console.log(data);
-                    });
-  var bookingSite = Promise.all([loginPost]).then(function(){
-                        var url = "http://46.101.232.43/dinner/login";
-  });
-
-  // var formData = {
-  //   // Pass a simple key-value pair
-  //   username:"zeke",password:"coys",submit:"login"
-  // };
-  var url = "http://46.101.232.43/dinner/login";
-  var FormData = require('form-data');
-  var formData = new FormData();
-  formData = {
-  // Pass a simple key-value pair
-  'username': 'zeke',
-  'password': 'coys',
-  'submit': 'login'
-};
-
-            //  var r = request.post({url:"http://46.101.232.43/dinner/login", formData: formData},
-            //         function optionalCallback(err, httpResponse, body)
-            //         {
-            //              if (err) {
-            //               return console.error('upload failed:', err);
-            //             }
-            //             console.log(httpResponse);
-            //            console.log('Upload successful!  Server responded with:', body);
-            //        });
-             //
-             //
-            //       var form = r.form();
-            //       form.append('username', 'zeke');
-            //       form.append('password', 'coys');
-            //       form.append('submit', 'login');
-             //
-            //         request .post('http://46.101.232.43/dinner/login', function optionalCallback(err, httpResponse, body) {
-            //          if (err) {
-            //           return console.error('upload failed:', err);
-            //         }
-            //         console.log(httpResponse);
-            //        console.log('Upload successful!  Server responded with:', body);
-            //        })
+  // var redirect = new Promise(function(resolve, reject){
+  //   var r = request.post({url:"http://46.101.232.43/dinner/login",
+  //               form: {username:'zeke',password:"coys",submit:"login"}},
+  //                     function(err,httpResponse,body)
+  //                     {
+  //                       if (err) {
+  //                          return reject(console.error('upload failed:', err));
+  //                        }
+  //                        //console.log(httpResponse);
+  //                        return resolve( body);
+  //                     });
+  //
+  // }).then(function(data){
+  //   var dataToArray = data.split(" ");
+  //   var subUrl = dataToArray[dataToArray.length -1];
+  //   //console.log(subUrl);
+  // });
 
 
-var a = "username=zeke&password=coys&submit=login";
-console.log("a",a);
-console.log("a.length",a.length);
+ var redirecter = require("./lib/utility").redirecter;
 
-var r = request({
-            method: 'POST',
-            preambleCRLF: true,
-            postambleCRLF: true,
-            uri: 'http://46.101.232.43/dinner/login',
-            multipart: [
-              {
-                'content-type': 'application/x-www-form-urlencoded',
-                'content-length': 40,
-                body: "username=zeke&password=coys&submit=login"
-              }
-                      ],
-            function (error, response, body)
-            {
-                if (error)
-                {
-                  return console.error('upload failed:', error);
-                }
-                console.log(response);
-                console.log('Upload successful!  Server responded with:', body);
-            }
-        });
+var redirectedBookingSubUrl = restaurantUrl.then(function(loginUrl){
+                  return redirecter("zeke", "coys", "login", loginUrl + "/login");
+              }).then(function(redirectMessage){
+                //console.log(redirectMessage);
+                var dataToArray = redirectMessage.split(" ");
+                var subUrl = dataToArray[dataToArray.length -1];
+                //console.log("suburl", subUrl);
+                return subUrl;
+              });
+var loader = require("./lib/utility").promiseHtml;
+var restaurantBookingUrl = Promise.all([restaurantUrl,redirectedBookingSubUrl])
+                                       .then(function(results){
+                                         console.log("results", results);
+                                         var fullBookingUrlString = results[0]+"/"+results[1];
+                                         console.log("fullBookingUrlString  ",fullBookingUrlString);
+                                         return fullBookingUrlString;
+                                      });
 
-
-
-
-
-                    // .then(function(arrayOfLinksMainPage){      //H
-                    //   this.calendarBaseUrl = url.trim().concat(arrayOfLinksMainPage[0]);
-                    //   this.cinemaUrl = url.trim().concat(arrayOfLinksMainPage[1]);
-                    //   this.restaurantUrl = url.trim().concat(arrayOfLinksMainPage[2]);
-                    //
-                    //   console.log(url.trim().concat(arrayOfLinksMainPage[0])); //Print out the url + the substring which is the link to the calendar page
-                    //   return loader(url.trim().concat(arrayOfLinksMainPage[0]));  //load the calendar page
-                    // })
-                    // .then(function(html){
-                    //   //console.log(html);      //Print out the calendar page
-                    //   return linkExtractor(html);
-                    // })
-                    // .then(function(arrayofLinksToCalendars){    //Extract the links to each calendar of each friend
-                    //   console.log("arrayofLinksToCalendars ", arrayofLinksToCalendars);
-                    //   this.arrayofLinksToCalendars = arrayofLinksToCalendars;  //Store the links to each calendar
-                    //   console.log(url.trim().concat("/").concat( arrayofLinksToCalendars[0]));
-                    //   return (load(url.trim().concat("/").concat( arrayofLinksToCalendars[0])));
-                    // })
-                    // .then(function(petersCalendarHtmlPage){
-                    //   console.log(petersCalendarHtmlPage);
-                    //   console.log("this.arrayOfLinksMainPage", this.arrayOfLinksMainPage);
-                    //   console.log("this.calendarBaseUrl", this.calendarBaseUrl);
-                    //   console.log("this.cinemaUrl", this.cinemaUrl);
-                    //   console.log("this.arrayofLinksToCalendars", this.arrayofLinksToCalendars);
-                    // });
-                    //
-
-// Promise.all(p1).then(function(arr){
-//                                   console.log(arr[0]);
-//                                   return linkExtractor(url.concat(arr[0]));
-//                               });
+  var  restaurantBookingPage = restaurantBookingUrl.then(function(urlLink){
+                                            var trimmedUrl = urlLink.trim();
+                                            console.log("trimmedUrl", trimmedUrl);
+                                          return loader(trimmedUrl);
+                                    }).then(function(html){
+                                      console.log(html);
+                                    })
