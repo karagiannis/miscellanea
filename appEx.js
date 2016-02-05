@@ -306,35 +306,37 @@ function BookATableAfterServerHasReceivedUserInput(fullBookingUrlString,CookieSt
 
 
 
-
+return new Promise(function(resolve, reject){
 //Books a table and receives a response html page from the server
-var bookingATableNow = Promise.all([fullBookingUrlString,CookieString, group,dayTimeStr,csrftoken])
+   return Promise.resolve([fullBookingUrlString,CookieString, group,dayTimeStr,csrftoken])
                               .then(function(results){
                                 var bookATable = require("./lib/utility").bookATable;
                                 var fullBookingUrlString = results[0];
-                                console.log("fullBookingUrlString", fullBookingUrlString);
+                                //console.log("fullBookingUrlString", fullBookingUrlString);
                                 var CookieString = results[1];
-                                console.log("CookieString ", CookieString);
+                                //console.log("CookieString ", CookieString);
                                 var group = results[2];
-                                console.log("group ", group);
+                                //console.log("group ", group);
                                 var dayTimeStr = results[3];
-                                console.log("dayTimeStr ", dayTimeStr);
+                                //console.log("dayTimeStr ", dayTimeStr);
                                 var csrftoken = results[4];
-                                console.log("csrftoken");
-                                return results;
+                                //console.log("csrftoken");
+                                return bookATable(fullBookingUrlString,CookieString, group,dayTimeStr,csrftoken);
 
+                              }).then(function(html){
+                                //console.log("html", html);
+                                return html;
+                              }).then(function(html){
+                                var bookingsResponser = require("./lib/utility").bookingsResponser;
+                                return bookingsResponser(html);
+                              }).then(function(greeting){
+                                //setTimeout(function() { console.log("setTimeout: It's been one second!"); }, 2000);
+                                //console.log(greeting);
+                                return resolve(greeting);
                               });
-                          //     .then(function(html){
-                          //       //console.log("html", html);
-                          //       return html;
-                          //   }).then(function(html){
-                          //     var bookingsResponser = require("./lib/utility").bookingsResponser;
-                          //     return bookingsResponser(html);
-                          // }).then(function(greeting){
-                          //   //console.log(greeting);
-                          //   return resolve(greeting);
-                          // });
-                      return bookingATableNow;
+                        //setTimeout(function() { console.log("setTimeout: It's been one second!"); }, 2000);
+
+      });
 
 }
 module.exports.BookATableAfterServerHasReceivedUserInput = BookATableAfterServerHasReceivedUserInput;
