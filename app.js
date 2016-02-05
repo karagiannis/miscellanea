@@ -207,17 +207,28 @@ var restaurantBookingHTML = Promise.all([restaurantUrl,redirectedBookingSubUrlAn
                                              'cookie': CookieString.replace(/['"]+/g, '').split()
                                            }
                                          };
-                                         console.log("options.url", options.url);
-                                         console.log(options.headers.cookie);
+                                        // console.log("options.url", options.url);
+                                        // console.log(options.headers.cookie);
                                          return bookingsPageLoader(options);
                                       }).then(function(html){
-                                        console.log(html);
+                                        return html;
                                       });
 
-  // var  restaurantBookingPage = restaurantBookingUrl.then(function(urlLink){
-  //                                           var trimmedUrl = urlLink.trim();
-  //                                           console.log("trimmedUrl", trimmedUrl);
-  //                                         return loader(trimmedUrl);
-  //                                   }).then(function(html){
-  //                                     console.log(html);
-  //                                   })
+var availibleTables = require("./lib/utility").availibleTables;
+
+var availibleTablesList = restaurantBookingHTML.then(function(html){
+                                          //console.log(html);
+                                                    return availibleTables(html);
+                                              }).then(function(data){
+                                                    //console.log(data);
+                                                    return data.filter(function(a){
+                                                          if(a.match(/group/))
+                                                             return false;
+                                                          else {
+                                                             return true;
+                                                          }
+                                                  });
+                                              }).then(function(filteredData){
+                                                    console.log(filteredData.slice(0, filteredData.length-3));
+                                                    return filteredData;
+                                              });
