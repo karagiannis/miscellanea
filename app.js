@@ -220,15 +220,15 @@ var availibleTablesList = restaurantBookingHTML.then(function(html){
                                           //console.log(html);
                                                     return availibleTables(html);
                                               }).then(function(data){
-                                                    //console.log(data);
-                                                    return data.filter(function(a){
-                                                          if(a.match(/group/))
-                                                             return false;
-                                                          else {
-                                                             return true;
-                                                          }
+                                                    console.log(data);
+                                                    return data;
                                                   });
-                                              }).then(function(filteredData){
-                                                    console.log(filteredData.slice(0, filteredData.length-3));
-                                                    return filteredData;
-                                              });
+
+var bookATable = rquire("./lib/utility").bookATable;
+//bookATable(url,cookie, group,dayTimeString,csrftoken)
+var dayTimeString = son1618;
+
+var bookingATableNow = Promise.all([redirectedBookingSubUrlAndCookie,availibleTablesList,dayTimeString])
+                              .then(function(results){
+                                
+                              });
