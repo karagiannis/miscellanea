@@ -9,25 +9,25 @@ module.exports = {request: request,
 
 function request(config)
 {
-  console.log("inide request");
-  console.log("config", config);
+  //console.log("inide request");
+  //console.log("config", config);
    return new Promise(function(resolve,reject){
      var req = new XMLHttpRequest();
 
 
           req.addEventListener("load", function(){
-              console.log("Inside addEventlistener");
+              //console.log("Inside addEventlistener");
             if (req.status > 200){
-              console.log(req.status)
+              //console.log(req.status)
                return reject(req.status);
              }
             else {
-              console.log(req.responseText);
-              console.log(req.status);
+              //console.log(req.responseText);
+              //console.log(req.status);
               return resolve(req.responseText);
             }
           });
-          console.log("Before sending");
+          //console.log("Before sending");
           req.open(config.method, config.url);
           req.setRequestHeader("Content-type", config.contentType);
         //req.setRequestHeader("Content-length", config.contentType.length);
@@ -40,7 +40,7 @@ function request(config)
 function get(config)
 {
   config.method = "GET";
-  console.log("Insside get");
+  //console.log("Insside get");
   return request(config);
 }
 

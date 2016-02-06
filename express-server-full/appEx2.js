@@ -167,6 +167,62 @@ var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
 }
 module.exports.extractTheMeetingDays = extractTheMeetingDays;
 
+function extractMovieNames(meetingDayString,username, password ){
+
+  var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+  var request = require("request");
+  var url = url || "http://46.101.232.43 ";
+  var username = username || "zeke";
+  var password = password || "coys";
+
+  var scraper = require("./lib/utility").scraper;
+
+  //scraper(url);
+  var loader = require("./lib/utility").promiseHtml;
+  var linkExtractor = require("./lib/utility").linkExtractor;
+  var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
+
+
+  //Load the html page of "http://46.101.232.43 "
+  var mainPage = loader(url);
+
+  //Extract all links from mainpage at http://46.101.232.43
+  var mainPageLinks = mainPage.then(function(html){  //Get the main html page from input url
+                      //console.log(html);
+                        return linkExtractor(html);   //Extract all links
+                    });
+
+  //Grab the cinema subUrl and append it to http://46.101.232.43, giving http://46.101.232.43/cinema
+  var cinemaUrl =  mainPageLinks.then(function(links){
+                      //console.log(url.trim().concat(links[1]));
+                      return(url.trim().concat(links[1]));
+
+                    });
+
+
+//setTimeout(function() { console.log("setTimeout: It's been one second!"); }, 2000);
+//Loads the html of the cinema page
+var cinemaHTML = cinemaUrl.then(function(urlCinema){
+                            //console.log("urlCinema", urlCinema);
+                            return loader(urlCinema);
+                      });
+
+var filmExtractor = require("./lib/utility").filmExtractor;
+
+// Extracts the films showed at cinema:   Cinema films [ 'Söderkåkar', 'Fabian Bom', 'Pensionat Paradiset', '' ]
+var cinemaFilms = cinemaHTML.then(function(html){
+                            //console.log("cinema html", html)
+                            return filmExtractor(html);
+                      }).then(function(data){
+                        //console.log("Cinema films", data);
+                        return data;
+                      });
+      return cinemaFilms;
+
+}
+module.exports.extractMovieNames = extractMovieNames;
+
 function extractMovieShowData(meetingDay, movie, username,password){
 
 
@@ -252,6 +308,11 @@ var availibleFilm = Promise.all([cinemaUrl, cinemaFilms, meetingDay]).then(funct
 }
 module.exports.extractMovieShowData = extractMovieShowData;
 
+function extractAvailibleTables(dayStr,username, password){
+
+
+}
+module.exports.extractAvailibleTables = extractAvailibleTables;
 function prepareForUserInput(timeString){
 
 var loginDetailsExtractor = require("./lib/utility").loginDetailsExtractor;
