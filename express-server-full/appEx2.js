@@ -308,11 +308,135 @@ var availibleFilm = Promise.all([cinemaUrl, cinemaFilms, meetingDay]).then(funct
 }
 module.exports.extractMovieShowData = extractMovieShowData;
 
-function extractAvailibleTables(dayStr,username, password){
+function extractAvailibleTables(username, password){
+
+  //var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+  var request = require("request");
+  var url = url || "http://46.101.232.43 ";
+  var username = username || "zeke";
+  var password = password || "coys";
+
+  var scraper = require("./lib/utility").scraper;
+
+  //scraper(url);
+  var loader = require("./lib/utility").promiseHtml;
+  var linkExtractor = require("./lib/utility").linkExtractor;
+  var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
+
+  //Hard code input values for checking the film availibility, for test
+  //var day = "01";   //Friday = "01", Saturday = "02", Sunday = "03"
+//  var movie = "01";  //Söderkåkar, film number one in the list
 
 
-}
+    //Load the html page of "http://46.101.232.43 "
+    var mainPage = loader(url);
+
+    //Extract all links from mainpage at http://46.101.232.43
+    var mainPageLinks = mainPage.then(function(html){  //Get the main html page from input url
+                        //console.log(html);
+                          return linkExtractor(html);   //Extract all links
+                      });
+
+  //Grab the restaurant subUrl and append it to http://46.101.232.43, giving http://46.101.232.43/dinner/
+  // THIS IS THE LOGIN URL
+  var restaurantUrl = mainPageLinks.then(function(links){
+                      //console.log("restaurant url", url.trim().concat(links[2]));
+                      return(url.trim().concat(links[2]));
+                    });
+
+
+  var loginDetailsExtractor = require("./lib/utility").loginDetailsExtractor;
+  //Used to extract the key value pairs, to be combined in the form POST : login details [ 'username', 'password', 'submit', 'login', '' ]
+  //Will be the request package be encoded to "username=zeke&password=coys&submit=login"
+  var loginDetails = restaurantUrl.then(function(restauranturl){
+                          return loader(restauranturl);
+                    }).then(function(htmlPage){
+                          return(loginDetailsExtractor(htmlPage));
+                    }).then(function(data){
+                      //console.log("login details", data);
+                      return data;
+                    });
+
+
+
+   var redirecter = require("./lib/utility").redirecter;
+
+
+  //Does the post of username and password and recieves redirect url + cookie :
+  // arr  [ 'login/booking"','"node_session_cookie=s%3AYoBMFVwmIi6kv6Xflm9lDWBwwy0qxlw6.wIScZN0zTaxoh6v2Jot3N02cNkv69I8zP7Dv4JMp8%2Fs; Path=/; HttpOnly"' ]
+    var redirectedBookingSubUrlAndCookieEx = Promise.all([username,password,loginDetails,restaurantUrl]).then(function(results){
+                      var username = results[0]; //zeke
+                      var password = results[1]; //coys
+                      var valueForSubmit = results[2][3]; // "login"
+                      var urlForPOSTingLoginDetails = results[3] + "/login"; //http://46.101.232.43/dinner/login
+                      return redirecter(username, password, valueForSubmit, urlForPOSTingLoginDetails);
+                  }).then(function(redirectMessage){
+                    //console.log("redirectMessage",redirectMessage);
+                    var redirectArray = redirectMessage;
+                    var messageWithSubUrlIncluded = redirectArray[0].split(" ");
+                    var subUrl = messageWithSubUrlIncluded[messageWithSubUrlIncluded.length -1];
+                    //console.log("Suburl NOW ", subUrl);
+                    var messageWithCookieIncludedTemp = redirectArray[1].split("[")[1].split("]")[0];
+                    //console.log("messageWithCookieIncludedTemp ", messageWithCookieIncludedTemp);
+                    var arr = [];
+                    arr[0]=subUrl;
+                    arr[1] = messageWithCookieIncludedTemp;//The cookie
+                    //console.log("arr ", arr);
+                    return arr;
+                  });
+
+  var bookingsPageLoader = require("./lib/utility").bookingsPageLoader;
+
+  //Loads the html of the restaurant bookings page
+  var restaurantBookingHTML = Promise.all([restaurantUrl,redirectedBookingSubUrlAndCookieEx])
+                                         .then(function(results){
+                                           //console.log("results", results);
+                                           var fullBookingUrlString = results[0]+"/"+results[1][0];
+                                           var CookieString = results[1][1];
+                                           //console.log("fullBookingUrlString  ",fullBookingUrlString);
+
+                                           var options = {
+                                             url: fullBookingUrlString.trim().replace(/['"]+/g, ''),  //taking away double quotes
+                                             headers: {
+                                               'User-Agent': 'request',
+                                               'cookie': CookieString.replace(/['"]+/g, '').split()
+                                             }
+                                           };
+                                          // console.log("options.url", options.url);
+                                          // console.log(options.headers.cookie);
+                                           return bookingsPageLoader(options);
+                                        }).then(function(html){
+                                          return html;
+                                        });
+
+  var availibleTables = require("./lib/utility").availibleTables;
+
+  //Extracts the availbe days and times for booking a table, as well as a special token csrf_token to be used when posting
+  //availible Tables [ 'group1','fre1416','group1','fre1618','group1','fre1820','group1','lor1820',
+                     //'group1','lor2022','group1','son1416','group1','son1618','group1','son1820',
+                     //'group1','son2022','csrf_token','Jishgeny6753ydiayYHSjay0918','' ]
+  var availibleTablesList = restaurantBookingHTML.then(function(html){
+                                            //console.log(html);
+                                                      return availibleTables(html);
+                                                }).then(function(data){
+                                                      //console.log("availible Tables", data);
+                                                      return data;
+                                                    });
+
+                                var a =  Promise.all([restaurantUrl,redirectedBookingSubUrlAndCookieEx,availibleTablesList])
+                                               .then(function(results){
+                                                 return results;
+                                               });
+                                return a;
+
+
+                                  //The above pattern does not work in the function below !?!?!
+  };
 module.exports.extractAvailibleTables = extractAvailibleTables;
+
+
+
 function prepareForUserInput(timeString){
 
 var loginDetailsExtractor = require("./lib/utility").loginDetailsExtractor;
