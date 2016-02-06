@@ -4,7 +4,7 @@ var BookATableAfterServerHasReceivedUserInput = require("./appEx").BookATableAft
 
 var dataOnCalendarsMoviesAndRestaurantBookingInfo = prepareForUserInput()
                                                     .then(function(data){
-                                                      //console.log(data);
+                                                      console.log(data);
                                                       return data;
                                                     });
 

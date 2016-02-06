@@ -1,5 +1,5 @@
 
-function prepareForUserInput(url, username, password){
+function extractTheMeetingDays(url, username, password){
 
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -26,7 +26,7 @@ var movie = "01";  //Söderkåkar, film number one in the list
 
   //Extract all links from mainpage at http://46.101.232.43
   var mainPageLinks = mainPage.then(function(html){  //Get the main html page from input url
-                      //  console.log(html);
+                      //console.log(html);
                         return linkExtractor(html);   //Extract all links
                     });
 
@@ -131,7 +131,7 @@ var MarysCalendar = MarysFullCalendarUrl.then(function(calendarUrl){
 //Used for converting integer value to string representing day, to be used with meetingDay routine
 //var possibleDays = ["friday", "saturday", "sunday"];
 
-//Returns and array of possible meetingdays : arr [ true, false, false ]
+//Should return the meeting day string
 var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
                           .then(function(calendars){
                                   var arr = [];
@@ -145,13 +145,65 @@ var meetingDay = Promise.all([PetersCalendar,PaulsCalendar,MarysCalendar])
                                   //console.log("meeting day", arr);
                                   arr.forEach(function(elem, i){
                                     if(elem)
-                                      //console.log("Possible meeting day",possibleDays[i] );
+                                    //console.log("Possible meeting day",possibleDays[i] );
                                       console.log("");
                                   });
                                   //console.log("arr", arr);
+                                  var str = "";
+                                  for (var i = 0; i < arr.length; i++){
+                                    if(arr[i] === true){
+                                      str = "0" + i;
+                                      //console.log("meetingDayString", str);
+                                      break;
+                                    }
+                                  }
+                                  var str = "01";
+                                  //console.log("meetingDayString", str);
+                                  //return str;
+                                //console.log("arr", arr);
                                 return arr;
                           });
+            return meetingDay;
+}
+module.exports.extractTheMeetingDays = extractTheMeetingDays;
 
+function extractMovieShowData(meetingDay, movie, username,password){
+
+
+
+  var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+  var request = require("request");
+  var url = url || "http://46.101.232.43 ";
+  var username = username || "zeke";
+  var password = password || "coys";
+
+  var scraper = require("./lib/utility").scraper;
+
+  //scraper(url);
+  var loader = require("./lib/utility").promiseHtml;
+  var linkExtractor = require("./lib/utility").linkExtractor;
+  var okNotOkExtractor = require("./lib/utility").okNotOkExtractor;
+
+
+  //Load the html page of "http://46.101.232.43 "
+  var mainPage = loader(url);
+
+  //Extract all links from mainpage at http://46.101.232.43
+  var mainPageLinks = mainPage.then(function(html){  //Get the main html page from input url
+                      //console.log(html);
+                        return linkExtractor(html);   //Extract all links
+                    });
+
+  //Grab the cinema subUrl and append it to http://46.101.232.43, giving http://46.101.232.43/cinema
+  var cinemaUrl =  mainPageLinks.then(function(links){
+                      //console.log(url.trim().concat(links[1]));
+                      return(url.trim().concat(links[1]));
+
+                    });
+
+
+//setTimeout(function() { console.log("setTimeout: It's been one second!"); }, 2000);
 //Loads the html of the cinema page
 var cinemaHTML = cinemaUrl.then(function(urlCinema){
                             //console.log("urlCinema", urlCinema);
@@ -179,12 +231,14 @@ var ajaxConfig = {contentType:"application/json",
                   url:"",
                   query:""};
 var ajax = require("./lib/ajax");
+//console.log("ajax", ajax);
 
 // Returns an object with the avaibility of a certain film a certain day
 //[ { status: 0, day: '01', time: '16:00', movie: '01' }, { status: 1, day: '01', time: '18:00', movie: '01' }, { status: 0, day: '01', time: '21:00', movie: '01' } ]
-var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results){
+var availibleFilm = Promise.all([cinemaUrl, cinemaFilms, meetingDay]).then(function(results){
                             //console.log("results", results);
-                            ajaxConfig.url = results[0] + "/check?day=" + day.trim() + "&movie=" + movie.trim();
+                            //console.log("ajaxconfig", ajaxConfig.url);
+                            ajaxConfig.url = results[0] + "/check?day=" + results[2].trim() + "&movie=" + movie.trim();
                             //console.log("ajaxConfig.url", ajaxConfig.url);
                             return ajax.get(ajaxConfig);
                     }).then(function(JSONstr){
@@ -193,6 +247,12 @@ var availibleFilm = Promise.all([cinemaUrl, cinemaFilms]).then(function(results)
                       return obj;
                     });
 
+    return availibleFilm;
+
+}
+module.exports.extractMovieShowData = extractMovieShowData;
+
+function prepareForUserInput(timeString){
 
 var loginDetailsExtractor = require("./lib/utility").loginDetailsExtractor;
 //Used to extract the key value pairs, to be combined in the form POST : login details [ 'username', 'password', 'submit', 'login', '' ]
@@ -289,7 +349,7 @@ var availibleTablesList = restaurantBookingHTML.then(function(html){
                                                     return data;
                                                   });
 
-                              var a = Promise.all([meetingDay,cinemaUrl,cinemaFilms,availibleFilm,
+                              var a =  Promise.all([meetingDay,cinemaUrl,cinemaFilms,availibleFilm,
                                                               restaurantUrl,redirectedBookingSubUrlAndCookieEx,availibleTablesList])
                                              .then(function(results){
                                                return results;
@@ -297,6 +357,7 @@ var availibleTablesList = restaurantBookingHTML.then(function(html){
                               return a;
 
 
+                                //The above pattern does not work in the function below !?!?!
 };
 
 module.exports.prepareForUserInput = prepareForUserInput;
