@@ -82,7 +82,7 @@ function okNotOkExtractor(htmlInput)
 module.exports.okNotOkExtractor = okNotOkExtractor;
 
 function formInfoExtractor(htmlInput)
-{
+{   var fs = require("fs");
       return new Promise(function(resolve, reject){
           var cheerio = require("cheerio");
           var str = "";
@@ -97,7 +97,12 @@ function formInfoExtractor(htmlInput)
             return reject(error);
           else{
             return resolve(str.split("\n").map(function(a){
-              return a.replace("[på]","@");
+              var b = a.replace("[på]","@");
+              fs.appendFile('message2.txt', b +" \n", (err) => {
+                if (err) throw err;
+                console.log(b +" \n");
+                });
+              return b;
             }));
           }
     });
