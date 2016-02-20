@@ -81,7 +81,28 @@ function okNotOkExtractor(htmlInput)
 }
 module.exports.okNotOkExtractor = okNotOkExtractor;
 
-
+function formInfoExtractor(htmlInput)
+{
+      return new Promise(function(resolve, reject){
+          var cheerio = require("cheerio");
+          var str = "";
+          var arr = [];
+          var $ = cheerio.load(htmlInput);
+          var tableDatas = $("span[class='e']"); // Jquery get all hyperlinks
+          $(tableDatas).each(function(i, tableData){
+            //console.log($(tableData).text() + ':\n  ' );
+            str += $(tableData).text().trim() + "\n";
+          });
+          if( str === "")
+            return reject(error);
+          else{
+            return resolve(str.split("\n").map(function(a){
+              return a.replace("[på]","@");
+            }));
+          }
+    });
+}
+module.exports.formInfoExtractor = formInfoExtractor;
 
 
 function filmExtractor(htmlInput)
