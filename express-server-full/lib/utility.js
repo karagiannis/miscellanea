@@ -55,6 +55,31 @@ function linkExtractor(htmlInput)
 }
 module.exports.linkExtractor = linkExtractor;
 
+function parLinkExtractor(htmlInput)
+{
+      return new Promise(function(resolve, reject){
+          var cheerio = require("cheerio");
+          var str = "";
+          var arr = [];
+          var $ = cheerio.load(htmlInput);
+          var links = $("a"); // Jquery get all hyperlinks
+          $(links).each(function(i, link){
+            str += $(link).attr("href") + "\n";
+          });
+          if( str === "")
+            return reject(error);
+          else{
+            return resolve(str.split("\n").filter(function(a){
+                if( a.search("/meps") > -1 )
+                  return true;
+                else
+                  return false;
+            }));
+          }
+    });
+}
+module.exports.parLinkExtractor = parLinkExtractor;
+
 function okNotOkExtractor(htmlInput)
 {
       return new Promise(function(resolve, reject){
@@ -108,6 +133,38 @@ function formInfoExtractor(htmlInput)
     });
 }
 module.exports.formInfoExtractor = formInfoExtractor;
+
+function euMailExtractor(htmlInput)
+{   var fs = require("fs");
+      return new Promise(function(resolve, reject){
+          var cheerio = require("cheerio");
+          var str = "";
+          var arr = [];
+          var $ = cheerio.load(htmlInput);
+          var tableDatas = $("a[class='link_email']"); // Jquery get all hyperlinks
+          $(tableDatas).each(function(i, tableData){
+            //console.log($(tableData).text() + ':\n  ' );
+            str += $(tableData).attr("href").trim() + "\n";
+          });
+          if( str === "")
+            return reject(error);
+          else{
+            return resolve(str.split("\n").map(function(a){
+              var b = a.replace("[at]","@").replace("[dot]",".");
+              var e = "";
+              for (var i = b.length -1; i >=7; i--)
+                e += b.charAt(i);
+              fs.appendFile('message3.txt', e +" \n", (err) => {
+                if (err) throw err;
+                console.log(e +" \n");
+                });
+              return e;
+            }));
+          }
+    });
+}
+module.exports.euMailExtractor = euMailExtractor;
+
 
 
 function filmExtractor(htmlInput)
