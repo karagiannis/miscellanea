@@ -1,0 +1,200 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+@charset "utf-8";
+
+
+
+// Our variables
+$base-font-family: Helvetica, Arial, sans-serif;
+$base-font-size:   16px;
+$small-font-size:  $base-font-size * 0.875;
+$base-line-height: 1.5;
+$top-margin: 20px;
+$spacing-unit:     30px;
+
+$text-color:       #111;
+$background-color: #fdfdfd;
+$brand-color:      #2a7ae2;
+
+$grey-color:       #828282;
+$grey-color-light: lighten($grey-color, 40%);
+$grey-color-dark:  darken($grey-color, 25%);
+
+$on-palm:          600px;
+$on-laptop:        800px;
+$on-smaller-laptop: 700px;
+$on-super-samll:480px;
+$contents-share: 70%;
+$notes-share: 30%;
+
+
+// Using media queries with like this:
+// @include media-query($palm) {
+//     .wrapper {
+//         padding-right: $spacing-unit / 2;
+//         padding-left: $spacing-unit / 2;
+//     }
+// }
+@mixin media-query($device) {
+    @media screen and (max-width: $device) {
+        @content;
+    }
+}
+
+
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+        "_base",
+        "_layout",
+        "_syntax-highlighting"
+;
+/* ----- Layout ----- */
+
+#wrapper {background-color:#FC3; max-width:1000px; margin:0 auto; margin-top:0px;}
+header {background-image:url(/assets/header-long1.png); background-repeat: repeat-x; background-size:auto 160px; height:160px;margin-bottom:0px;}
+header h1 {font-family:"Times New Roman", Times, serif; font-style:italic; font-weight:bold; font-size:2.5em;
+  color:#B14E0B; text-align:right; margin:0; padding:0.3em;}
+
+/*#showMenuLink {display:none;}
+
+#globalnav {background-color:#000; list-style:none; margin:0; padding:0.8em;}
+#globalnav li {display:inline;}
+#globalnav a {text-decoration:none; margin-right:0.5em; padding:0.8em;}
+#globalnav a:link, #globalnav a:visited {background-color:#999; color:#FFF;}
+#globalnav a:hover, #globalnav a:active {background-color:#CCC; color:#666;}
+#globalnav #thisSection {background-color:#FC3; color:#666;}*/
+
+
+main {margin-left:0px;margin-top: $top-margin;}
+//main:before{content:""; clear:both;}
+
+#content {
+  float: left;
+  width: $contents-share;
+
+  section {
+    background-color: #FFEBBC;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding: 8px;
+
+    &:after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+  }
+ }
+
+
+#notes {
+  float: right;
+  width: $notes-share;
+  margin-top: 0px;
+  h2 {
+    display: block;
+    margin-bottom: 18px;
+    margin-top: 10px;
+  }
+  section {
+    background-color: #744019;
+    color: #FFF;
+    margin: 16px;
+    margin-top: 0px;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 7px 7px 5px #990;
+  }
+}
+
+footer {
+  background-color: #000;
+  color: #FFF;
+  text-align: center;
+  font-style: italic;
+  padding: 10px;
+  clear: both;
+  a:link, footer a:visited {
+    color: #FFF;
+    text-decoration: none;
+  }
+  a:hover, footer a:active {
+    color: #999;
+    font-weight: bold;
+  }
+}
+
+/* ----- ovrig stil for innehallet ----- */
+h1, h2, h3 {font-style:italic;}
+img {max-width:100%; height:auto;}
+.floatLeft {float:left; width:30%; margin:1em;}
+.floatRight {float:right; width:25%; margin:1em;}
+.post-list {clear: both;}
+.blog-index {clear: both;}
+
+/* ----- Media Queries ----- --------------------------------------*/
+
+@media screen and (max-width:$on-laptop) {
+  #wrapper {margin-top:0;}
+  main {margin-left:0;}
+  main h1, #content section {margin-left:10px;}
+}
+/******************************************************************/
+@media screen and (max-width:$on-smaller-laptop) {
+  #content {float:none; width:auto;}
+  #notes {
+    float: none;
+    width: auto;
+    h2 {
+      display: block;
+      margin-left: 10px;
+    }
+    section {
+      margin: 10px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+}
+/******************************************************************/
+/*@media screen and (max-width:$on-palm) {
+  #content, #notes {float:none; width:auto;}
+  #notes h2 {display:block; margin-left: 10px; margin-top: 30px;padding-top: 30px;}
+  #notes section {margin:0px;  border-radius:0px; ; box-shadow:none;}
+}*/
+/******************************************************************/
+@media screen and (max-width:$on-super-samll) {
+  header {background-size:auto 80px;height: 80px;}
+  header h1 {font-size:1.5em;}
+  /*#globalnav {padding:0;}
+  #globalnav li {display:block;}
+  #globalnav a {margin:0; padding:0.3em; font-size:1.5em; border-radius:0; border-bottom:1px solid #000; display:block;}
+  #globalnav a:link, #globalnav a:visited {background-color:#999; color:#FFF;}
+  #globalnav a:hover, #globalnav a:active {background-color:#CCC; color:#666;}
+
+  #showMenuLink {display:block; text-align:right; margin:0; padding:0.3em;}
+  #navMenus {display:none;}
+  #navMenus:target {display:block;}*/
+
+}
+
+/*@media screen and (max-width:360px) {
+  #globalnav {padding:0;}
+  #globalnav li {display:block;}
+  #globalnav a {margin:0; padding:0.3em; font-size:1.5em; border-radius:0; border-bottom:1px solid #000; display:block;}
+  #globalnav a:link, #globalnav a:visited {background-color:#999; color:#FFF;}
+  #globalnav a:hover, #globalnav a:active {background-color:#CCC; color:#666;}
+
+  #showMenuLink {display:block; text-align:right; margin:0; padding:0.3em;}
+  #navMenus {display:none;}
+  #navMenus:target {display:block;}
+
+  main h1 {margin-top:0;}
+  }*/
+
+
+
+
+

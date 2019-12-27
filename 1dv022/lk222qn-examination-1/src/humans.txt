@@ -1,0 +1,19 @@
+
+    /* TEAM */
+    Your title: Lasse Karagiannis.
+    Site: lasse.l.karagiannis£gmail.com
+    Twitter: Amalek_
+    Location: Frösön, Sweden
+
+    /* THANKS */
+    Name: Buddha, Jesus and all kind people
+
+    /* SITE */
+    Last update: 2011/11/17
+    Standards: HTML5, CSS3,
+    Components: Jekyll
+    Software: Git,Vagrant with Virtual Box, Webbstorm
+
+
+
+

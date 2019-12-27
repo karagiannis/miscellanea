@@ -1,0 +1,79 @@
+---
+layout: default
+---
+<div class="home">
+
+  <!--<h1 class="page-heading">Posts</h1> -->
+<!--
+  <header>
+            <h1>Elefanter</h1>
+    </header>  -->
+<div id="wrapper">
+ <!-- <nav>
+    <p id="showMenuLink"><a href="#navMenus"><img src="/assets/menu-icon.gif" alt="Visa meny"></a></p>
+    <div id="navMenus">
+      <ul id="globalnav">
+        <li><a href=# id="thisSection">Startsida</a></li>
+        <li><a href=#>Blogg index</a></li>
+        <li><a href=#>Bildgalleri</a></li>
+        <li><a href=#>&nbsp;&nbsp;Kontakt&nbsp;&nbsp;</a></li>
+
+      </ul>
+    </div>
+  </nav>-->
+  <main>
+    <div id="content">
+      <h1>Senaste bloggposten</h1>
+      <section>
+        <div class="blog-index">
+          {% assign post = site.posts.first %}
+          {% assign content = post.content %}
+          {% include post_detail.html %}
+        </div>
+      </section>
+
+    </div> <!-- End content -->
+
+    <div id="notes">
+      <h2>Korta noteringar</h2>
+      <section>
+        <ul class="post-list">
+          {% for post in site.posts %}
+          <li>
+            <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+            <h2>
+              <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            </h2>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div> <!-- End notes -->
+
+   <!-- <div>
+      <ul class="post-list">
+        {% for post in site.posts limit:2 %}
+        <li>
+          <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+          <h2>
+            <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          </h2>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>-->
+    <div class="blog-index">
+      {% assign post = site.posts.previous %}
+      {% assign content = post.content %}
+      {% include post_detail.html %}
+    </div>
+  </main>
+
+</div>
+
+
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+
+</div>
